@@ -20,6 +20,27 @@ public class AbstractJsoupTenderScraperTest {
         assertCondition("Stadt Musterstadt".equals(tenders.get(0).getPublisher()), "Unexpected publisher");
         assertCondition(LocalDate.of(2026, 4, 21).equals(tenders.get(0).getDeadlineDate()), "Unexpected deadline");
         assertCondition("VG-2026-002".equals(tenders.get(1).getExternalId()), "Unexpected external id");
+
+        String nestedHtml = """
+                <section>
+                  <div class='search-result card' data-item-id='CARD-77'>
+                    <div class='header'>
+                      <h3>Rahmenvertrag Softwarepflege</h3>
+                      <div class='meta'><span>Auftraggeber: IT-Dienstleister Nord</span></div>
+                    </div>
+                    <div class='body'>
+                      <div class='description'>Pflege und Weiterentwicklung einer Fachanwendung.</div>
+                      <div class='details'>Angebotsfrist: 2026-07-14</div>
+                    </div>
+                  </div>
+                </section>
+                """;
+        List<Tender> nestedTenders = scraper.parse(nestedHtml);
+        assertCondition(nestedTenders.size() == 1, "Expected nested tender to be found");
+        assertCondition("Rahmenvertrag Softwarepflege".equals(nestedTenders.get(0).getTitle()), "Unexpected nested title");
+        assertCondition("IT-Dienstleister Nord".equals(nestedTenders.get(0).getPublisher()), "Unexpected nested publisher");
+        assertCondition(LocalDate.of(2026, 7, 14).equals(nestedTenders.get(0).getDeadlineDate()), "Unexpected nested deadline");
+        assertCondition("CARD-77".equals(nestedTenders.get(0).getExternalId()), "Unexpected nested external id");
     }
 
     private static void assertCondition(boolean condition, String message) {
