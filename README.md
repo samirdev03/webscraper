@@ -11,15 +11,16 @@ Java-Anwendung zum Einsammeln von Ausschreibungen aus vier Vergabeportalen und z
 
 ## Build & Run
 ```bash
-mkdir -p out
-javac -d out $(find src/main/java src/test/java -name '*.java')
-java -cp out com.example.tender.Application
+mvn -q -DskipTests compile
+mvn -q exec:java -Dexec.mainClass=com.example.tender.Application
 ```
 
 ## Tests
 ```bash
-java -cp out com.example.tender.scraper.AbstractJsoupTenderScraperTest
-java -cp out com.example.tender.repository.JsonTenderRepositoryTest
+mvn -q -DskipTests test-compile
+java -cp target/test-classes:target/classes com.example.tender.scraper.AbstractJsoupTenderScraperTest
+java -cp target/test-classes:target/classes com.example.tender.repository.JsonTenderRepositoryTest
+java -cp target/test-classes:target/classes com.example.tender.adapter.EvergabeAdapterTest
 ```
 
 Die Anwendung schreibt die aggregierten Ergebnisse nach `output/tenders.json`.
